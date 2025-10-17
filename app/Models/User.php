@@ -21,6 +21,11 @@ class User extends Model
         return $this->belongsTo(Credential::class);
     }
 
+    public function loans()
+    {
+        return $this->hasMany(BookLoan::class, 'book_serial_id');
+    }
+
     public function bookSerials()
     {
         return $this->belongsToMany(BookSerial::class, 'book_loans');

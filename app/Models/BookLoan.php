@@ -16,4 +16,14 @@ class BookLoan extends Model
     ];
 
     protected $dates = ['end_date'];
+
+    public function serial()
+    {
+        return $this->belongsTo(BookSerial::class, 'book_serial_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

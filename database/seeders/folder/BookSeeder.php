@@ -82,7 +82,7 @@ class BookSeeder extends Seeder
                     'title'     => $book['title'],
                     'author_id' => $author->id,
                     'genre_id'  => $genre->id,
-                    'image' => Str::slug($book['title'], '_') . '.png',
+                    'image' => str_replace(' ', '_', $book['title']) . '.png',
                 ]);
             }
         }
