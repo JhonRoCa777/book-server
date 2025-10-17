@@ -5,13 +5,17 @@ use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 
 /************************ PUBLIC ************************/
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout']);
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/logout', [AuthController::class, 'logout']);
+});
 
 /************************ PRIVATE ************************/
 Route::middleware('jwt.cookie')->group(function () {
 
-    Route::get('/me', [AuthController::class, 'me']);
+    Route::prefix('auth')->group(function () {
+        Route::get('/me', [AuthController::class, 'me']);
+    });
 
     //************************ ADMIN ************************/
     Route::middleware('admin.auth')->group(function () {

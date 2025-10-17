@@ -7,7 +7,6 @@ use App\Models\Credential;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -27,14 +26,12 @@ class AuthController extends Controller
     {
         $credential = Credential::where('username', $request->username)->first();
 
-        if (!$credential || !Hash::check($request->password, $credential->password)) {
-            return response('',401);
-        }
+        if (!$credential || !Hash::check($request->password, $credential->password))
+            return response('Credenciales Incorrectas', 404);
 
         $user = $credential->user;
-        if (!$user) {
-            return response('',404);
-        }
+        if (!$user)
+            return response('Usuario NO Encontrado', 404);
 
         $now = time();
         $exp = $now + ($this->ttl * 60);
@@ -59,13 +56,13 @@ class AuthController extends Controller
             sameSite: 'lax'
         );
 
-        return response('',200)->withCookie($cookie);
+        return response(true, 200)->withCookie($cookie);
     }
 
     public function logout()
     {
         $cookie = cookie()->forget($this->name);
-        return response('',200)->withCookie($cookie);
+        return response(true, 200)->withCookie($cookie);
     }
 
     public function me(Request $request)
@@ -73,15 +70,12 @@ class AuthController extends Controller
         $user = User::find($request->attributes->get('auth_user_id'));
 
         if (!$user)
-            return response('',404);
+            return response('Usuario NO Encontrado', 404);
 
         return response()->json([
-            'user' => [
-                "id" => $user->id,
-                "document" => $user->document,
-                "names" => $user->names,
-                "last_names" => $user->last_names,
-            ],
-            'role' => $user->credential->role]);
+            "names" => $user->names,
+            "last_names" => $user->last_names,
+            "role" => $user->credential->role,
+        ]);
     }
 }
